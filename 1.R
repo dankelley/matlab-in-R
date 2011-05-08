@@ -59,7 +59,7 @@ oceDebug(debug, "numberOfBytes", numberOfBytes, " ... proceeding to examine data
 ##readBin(buf[o+4+seq(0, numberOfBytes - 1)], what="double", size=4"
 ## read the data, item by item
 while (o < fileSize - 4) {
-    oceDebug(debug, "\no=", o, "; b=", b[o+0:3], "\n")
+    oceDebug(debug, "\no=", o, "; b[(-3):3]=", b[o+(-3):3], "\n")
     dataType <- readBin(b[o + 0:3], "integer", n=1, size=4, endian=endian, signed=FALSE)
     o <- o + 4
     if (dataType < 1 || dataType > 18)
