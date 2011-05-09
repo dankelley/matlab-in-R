@@ -3,29 +3,43 @@ debug <- 1
 ## data format p9 doc
 
 ##infile <- "2.mat"
-##infile <- "1.mat"
+##infile <- "list_two_matrices.mat"
 infile <- "vector.mat"                 # 3 values, in vector named 'vec'
 
-miTypes <- c("miINT8", "miUINT8", "miINT16", "miUINT16", "miINT32",
-             "miUINT32", "miSINGLE", "type8", "miDOUBLE", "type10",
-             "type11", "miINT64", "miUINT64", "miMATRIX", "miCOMPRESSED",
-             "miUTF8", "miUTF16", "miUTF32")
+miTypes <- c("miINT8",                 # 1.
+             "miUINT8",                # 2.
+             "miINT16",                # 3.
+             "miUINT16",               # 4.
+             "miINT32",                # 5.
+             "miUINT32",               # 6.
+             "miSINGLE",               # 7.
+             "type8",                  # 8.
+             "miDOUBLE",               # 9.
+             "type10",                 # 10.
+             "type11",                 # 11.
+             "miINT64",                # 12.
+             "miUINT64",               # 13.
+             "miMATRIX",               # 14.
+             "miCOMPRESSED",           # 15.
+             "miUTF8",                 # 16.
+             "miUTF16",                # 17.
+             "miUTF32")                # 18.
 ## classes defined in Table 1-3, page 1-16.
-classes <- c("mxCELL_CLASS", # Cell array
-             "mxSTRUCT_CLASS", # Structure
-             "mxOBJECT_CLASS", # Object
-             "mxCHAR_CLASS", # Character array
-             "mxSPARSE_CLASS", # Sparse array
-             "mxDOUBLE_CLASS", # Double precision array
-             "mxSINGLE_CLASS", # Single precision array
-             "mxINT8_CLASS", # 8-bit, signed integer
-             "mxUINT8_CLASS", # 8-bit, unsigned integer
-             "mxINT16_CLASS",# 16-bit, signed integer
-             "mxUINT16_CLASS", # 16-bit, unsigned integer
-             "mxINT32_CLASS", # 32-bit, signed integer
-             "mxUINT32_CLASS", # 32-bit, unsigned integer
-             "mxINT64_CLASS", # 64-bit, signed integer
-             "mxUINT64_CLASS" # 64-bit, unsigned integer
+classes <- c("mxCELL_CLASS",           # 1. Cell array
+             "mxSTRUCT_CLASS",         # 2. Structure
+             "mxOBJECT_CLASS",         # 3. Object
+             "mxCHAR_CLASS",           # 4. Character array
+             "mxSPARSE_CLASS",         # 5. Sparse array
+             "mxDOUBLE_CLASS",         # 6. Double precision array
+             "mxSINGLE_CLASS",         # 7. Single precision array
+             "mxINT8_CLASS",           # 8. 8-bit, signed integer
+             "mxUINT8_CLASS",          # 9. 8-bit, unsigned integer
+             "mxINT16_CLASS",          # 10. 16-bit, signed integer
+             "mxUINT16_CLASS",         # 11. 16-bit, unsigned integer
+             "mxINT32_CLASS",          # 12. 32-bit, signed integer
+             "mxUINT32_CLASS",         # 13. 32-bit, unsigned integer
+             "mxINT64_CLASS",          # 14. 64-bit, signed integer
+             "mxUINT64_CLASS"          # 15. 64-bit, unsigned integer
              )
 
 oceDebug(debug, "inFile=", infile, "\n")
@@ -34,15 +48,19 @@ seek(file, 0, "end")
 fileSize <- seek(file, 0, "start")
 oceDebug(debug, "filesize=",fileSize, "\n")
 b <- readBin(file, what="raw", n=fileSize)
+cat(infile, "contains:\n", paste(rep('-', 70), collapse=''), '\n')
+for (i in 1:length(b))
+    cat(readBin(b[i],"character",1,1))
+cat('\n', paste(rep('-', 70), collapse=''), '\n')
 descriptiveText <- format(paste(readBin(b[1:116], what="character",n=116), collapse=""))
 oceDebug(debug, "descriptiveText:", descriptiveText, "\n")
 endianIndicator <- readBin(b[127:128], what="character", n=1, size=2)
 endian <- if (endianIndicator == "MI") "swap" else "little"
-                                        # page 1-7
+## page 1-7
 version <- readBin(b[125:126], what="integer", n=1, size=2, signed=FALSE, endian=endian)
 if (version != 256)
     stop("version should be 256, but it is ", version)
-                                        # page 1-7
+## page 1-7
 subsysDataOffset <- readBin(b[121:124], what="character", n=1, size=4, signed=FALSE, endian=endian)
 if (subsysDataOffset != '0000' && subsysDataOffset != '    ')
     stop("subsysDataOffset should be 4 zeros, or 4 blanks, but it is '", subsysDataOffset)
